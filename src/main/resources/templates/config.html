@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:lang="en">
+<head>
+    <title>Admin Configuration page</title>
+    <!--    <link rel="stylesheet" th:href="@{/css/buttons.css}" type="text/css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <style>
+        .sidebar {
+            background-color: #f5f5f5;
+            padding: 10px;
+            height: 100vh;
+        }
+        .menu-list button {
+            width: 100%;
+            text-align: left;
+        }
+        .actionButton {
+            width: 100%;
+            margin-bottom: 10px;
+            background-color: #f5f5f5;
+            border: none;
+            text-align: left;
+            padding: 10px;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .actionButton:hover {
+            background-color: #e4e4e4;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="messages" th:if="${showMessage}">
+        <div th:each="message : ${messages}"
+             th:class="'notification ' + (${message} == 'Password updated successfully' or ${message} == 'Parameters Updated Successfully!' ? 'is-success' : 'is-danger is-light')">
+            <button class="delete close-button"></button>
+            <p th:text="${message}"></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.close-button').forEach((button) => {
+                button.addEventListener('click', (e) => {
+                    e.target.parentNode.remove();
+                });
+            });
+        });
+    </script>
+<section class="section">
+    <div class="container">
+
+        <div class="columns">
+            <div class="column is-one-quarter sidebar" id="actions">
+                <aside class="menu">
+                    <p class="menu-label">
+                        Menu
+                    </p>
+                    <ul class="menu-list">
+                        <li>
+                            <form class="actionForm" action="#" th:action="@{'/events'}" sec:authorize="hasAuthority('Administrateur')" method="post" >
+                                <button class="actionButton button is-fullwidth" type="submit">
+                                    <span class="icon"><i class="fas fa-eye"></i></span>
+                                    <span >Security Events</span>
+                                </button>
+                            </form>
+                        </li>
+                        <li><form class="actionForm" action="#" th:action="@{'/new'}" sec:authorize="hasAuthority('Administrateur')" method="get" >
+                            <button class="actionButton button is-fullwidth" type="submit">
+                                <span class="icon"><i class="fas fa-user-plus"></i></span>
+                                <span>Create New User</span>
+                            </button>
+                        </form></li>
+                        <li><form class="actionForm" action="#" th:action="@{'/locked_out_users'}" sec:authorize="hasAuthority('Administrateur')" method="post" >
+                            <button class="actionButton button is-fullwidth" type="submit">
+                                <span class="icon"><i class="fas fa-user-lock"></i></span>
+                                <span>Locked Out Users</span>
+                            </button>
+                        </form></li>
+                        <li><form class="actionForm" action="#" th:action="@{'/update_password'}" method="get" >
+                            <button class="actionButton button is-fullwidth" type="submit">
+                                <span class="icon"><i class="fas fa-pen"></i></span>
+                                <span>Update Password</span>
+                            </button>
+                        </form></li>
+                        <li><form class="actionForm" action="#" th:action="@{'/clients_residentiels'}" sec:authorize="hasAnyAuthority('Administrateur', 'Prepose aux clients residentiels')" method="post" >
+                            <button class="actionButton button is-fullwidth" type="submit">
+                                <span class="icon"><i class="fas fa-house-user"></i></span>
+                                <span>Clients Résidentiels</span>
+                            </button>
+                        </form></li>
+                        <li><form class="actionForm" action="#" th:action="@{'/clients_affaire'}" sec:authorize="hasAnyAuthority('Administrateur', 'Prepose aux clients d''affaire')" method="post" >
+                            <button class="actionButton button is-fullwidth" type="submit">
+                                <span class="icon"><i class="fas fa-user-tie"></i></span>
+                                <span>Clients Affaire</span>
+                            </button>
+                        </form></li>
+                        <li><form class="actionForm" action="#" th:action="@{'/login?logout'}" method="get" >
+                            <button class="actionButton button is-fullwidth" onmouseover="this.style.backgroundColor='#BA0000'; this.style.color='#f4f4f4';" onmouseout="this.style.backgroundColor=''; this.style.color='';"type="submit">
+                                <span class="icon"><i class="fas fa-right-from-bracket"></i></span>
+                                <span>Logout</span>
+                            </button>
+                        </form></li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="column" id="paramConfig" sec:authorize="hasAuthority('Administrateur')">
+                <form th:action="@{'/config_params'}" method="post" class="form">
+                    <label for="maxLoginAttempts">Maximum login attempts before being locked out: </label>:
+                    <input type="number" id="maxLoginAttempts" name="maxLoginAttempts" autofocus="autofocus" th:value="${maxLoginAttempts}" /> <br />
+
+                    <label for="timeBetweenLoginAttempts">Minimum seconds between login attempts (-1 to disable): </label>:
+                    <input type="number" id="timeBetweenLoginAttempts" name="timeBetweenLoginAttempts" th:value="${timeBetweenLoginAttempts}" /> <br />
+
+                    <label for="unusableNumberOfPasswords">Previous Passwords that cannot be reused: </label>:
+                    <input type="number" id="unusableNumberOfPasswords" name="unusableNumberOfPasswords" th:value="${unusableNumberOfPasswords}" /> <br />
+
+                    <label for="timeBeforePasswordExpires">Time before user passwords expire: </label>:
+                    <input type="number" id="timeBeforePasswordExpires" name="timeBeforePasswordExpires" th:value="${timeBeforePasswordExpires}" /> <br />
+
+                    <br />
+
+                    <label for="minLc">Minimum number of lowercase letters in password: </label>
+                    <input type="number" id="minLc" name="minLc" th:value="${minLc}" /> <br />
+
+                    <label for="minUc">Minimum number of uppercase letters in password: </label>
+                    <input type="number" id="minUc" name="minUc" th:value="${minUc}" /> <br />
+
+                    <label for="minLen">Minimum number of characters in password: </label>
+                    <input type="number" id="minLen" name="minLen" th:value="${minLen}" /> <br />
+
+                    <label for="minNan">Minimum number of non alpha-numeric characters in password: </label>
+                    <input type="number" id="minNan" name="minNan" th:value="${minNan}" /> <br />
+
+                    <label for="minNum">Minimum number of numbers in password: </label>
+                    <input type="number" id="minNum" name="minNum" th:value="${minNum}" /> <br />
+
+                    <div  class="field">
+                        <div class="control">
+                            <input class="button is-primary" type="submit" value="Update Parameters" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

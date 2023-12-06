@@ -1,0 +1,40 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+spring:
+  datasource:
+    url: jdbc:h2:./database/gti619
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console.enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  profiles:
+    active: dev
+
+# https://www.baeldung.com/x-509-authentication-in-spring-security
+# https://www.baeldung.com/spring-boot-https-self-signed-certificate?fbclid=IwAR0FyZKc6kbUMBjadgHvvOuHUscJoOBfgj58t3XYHg2ZrV0AQA1bT4X15yc
+server:
+  port: 8443
+  servlet:
+    session:
+      cookie:
+        secure: true
+        http-only: true
+  ssl:
+    key-store-type: PKCS12
+
+    key-store : classpath:keystore/localhost.p12
+
+    key-store-password : password
+
+    key-alias : localhost
+    enabled: true
+    trust-store: classpath:keystore/localhost.p12
+    trust-store-password: password

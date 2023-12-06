@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel='stylesheet' href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <title>Login page</title>
+    <script th:src="@{/js/passwordCheck.js}" type="text/javascript"></script>
+</head>
+<body>
+<div class="hero-body">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                <form th:action="@{/login}" method="post" class="box">
+                    <p th:if="${loginError}" class="help is-danger">Could not login</p>
+                    <p th:if="${lockedOut}">Your account has been locked, please contact an administrator</p>
+                    <p th:if="${tooManyLogins}" class="help is-danger" th:text="'You may attempt to login in ' + ${seconds} + ' seconds'"></p>
+                    <div class="field">
+                        <label for="username" class="label">Username</label>
+                        <div class="control has-icons-left">
+                            <input type="text" placeholder="username" id="username" name="username" autofocus="autofocus" th:class="${loginError} ? 'input is-danger'  : 'input'">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="password" class="label">Password</label>
+                        <div class="control has-icons-left">
+                            <input type="password" placeholder="*******" id="password" name="password" th:class="${loginError} ? 'input is-danger'  : 'input'">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="togglePasswordVis" class="label">Show Password</label>
+                        <div>
+                            <input type="checkbox" onclick="togglePasswordVisibility(['password'])" id="togglePasswordVis">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <input type="submit" value="Log in" class="button is-success" />
+                    </div>
+                    <div th:if="${loginError}">
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var input = document.getElementById('username');
+                                var passwordInput = document.getElementById("password");
+                                input.addEventListener('input', function () {
+                                    if (input.value.trim() === '') {
+                                        input.className = 'input is-danger';
+                                    } else {
+                                        input.className = 'input';
+                                    }
+                                });
+                                passwordInput.addEventListener('input', function () {
+                                    if (passwordInput.value.trim() === '') {
+                                        passwordInput.className = 'input is-danger';
+                                    } else {
+                                        passwordInput.className = 'input';
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

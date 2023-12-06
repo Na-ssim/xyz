@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            float: left;
+            width: 100%;
+        }
+        .styled-table thead tr {
+            background-color: #deebb5;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #deebb5;
+        }
+        .styled-table tr {
+            text-align: center;
+        }
+
+        #mainDiv {
+            width: 100%;
+            text-align: center;
+            float: left;
+        }
+    </style>
+    <title>Locked out users</title>
+</head>
+<body>
+<div>
+    <table class="styled-table">
+        <tr>
+            <th>User</th>
+        </tr>
+        <tr th:each="username: ${usernames}">
+            <td th:text="${username}"/>
+        </tr>
+    </table>
+</div>
+<div id="mainDiv">
+    <form action="#" th:action="@{'/temp_pwd'}" method="post" >
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username"/> <br />
+
+        <label for="pwd">Temporary Password</label>:
+        <input type="password" id="pwd" name="pwd"/> <br />
+
+        <label for="togglePasswordVis" class="label">Show Password</label>
+        <input type="checkbox" onclick="togglePasswordVisibility(['password'])" id="togglePasswordVis"> <br />
+
+        <button type="submit" id="resetPassword">Reset Password</button>
+    </form>
+</div>
+<div id="back">
+    <form action="#" th:action="@{'/config'}" method="post">
+        <button type="submit">Back</button>
+    </form>
+</div>
+</body>
+</html>
